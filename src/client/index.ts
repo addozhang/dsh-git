@@ -30,7 +30,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
 import type { SidebarRightTabDefinition } from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
 import type { Translate } from '@deepseek-ai/dsh-client-ui-slots'
-import { IconBranchOutline16 } from '@deepseek-ai/dsh-client-ui-primitives'
+import { IconBranchOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
 import { LogBody } from './page/LogBody.tsx'
 import { en, NS, zh, type GitKey } from './i18n/locales.ts'
 
@@ -50,13 +50,17 @@ function logDefinition(t: Translate<GitKey>): SidebarRightTabDefinition {
   return {
     id: GIT_LOG_ID,
     kind: GIT_LOG_KIND,
-    priority: 'builtin',
+    // `extension` is the band for a type from outside the product: it outranks
+    // the shipped viewers, which is the right rank for a page the product does
+    // not know, and the band the registry defaults to when omitted.
+    priority: 'extension',
     title: () => t('log.title'),
     guide: [{
+      id: GIT_LOG_ID,
       order: 20,
       title: () => t('log.title'),
       description: () => t('log.guide'),
-      icon: IconBranchOutline16,
+      icon: IconBranchOutlineRegular,
     }],
   }
 }
