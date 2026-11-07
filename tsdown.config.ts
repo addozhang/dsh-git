@@ -206,7 +206,18 @@ const host = defineConfig({
   // `package.json` names `lib/index.js`, which is the convention a profile
   // install expects; the package is `type: module`, so `.js` is already ESM.
   outExtensions: () => ({ js: '.js' }),
-  deps: { neverBundle: [/^@deepseek-ai\//] },
+  // Harness packages stay external — the profile has exactly one copy of each,
+  // and a second would break service identity. Every `@deepseek-ai/dsh-*` and
+  // `cordis` import in the host half is type-only anyway, so this mostly
+  // documents intent. `schemastery` is different: it is the one RUNTIME import
+  // of `lib/index.js`, and it must travel inside the bundle — an install from
+  // git or a registry runs no devDependencies and carries no node_modules of
+  // its own, so an external request here is a cold boot that cannot resolve
+  // its own config validator. tsdown externalizes anything declared in
+  // dependencies or peerDependencies, which is why `package.json` keeps
+  // schemastery in devDependencies only: that is the declaration class this
+  // bundler inlines.
+  deps: { neverBundle: [/^@deepseek-ai\/(cordis|dsh-)/] },
   outputOptions: {
     banner: '// dsh-git host half',
   },
